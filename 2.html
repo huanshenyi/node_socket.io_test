@@ -13,7 +13,10 @@
               conn.emit('msg',t.value)
           };
           conn.on("msg",(str)=>{
-            console.log(str)
+            // console.log(str)
+            var oLi = document.createElement('li');
+            oLi.innerHTML = str;
+            ul.appendChild(oLi);
           })
       }
     </script>
