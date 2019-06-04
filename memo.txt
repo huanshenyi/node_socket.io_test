@@ -1,0 +1,5 @@
+broadcast->自分以外の人間にメッセージを発信する
+模擬qq
+text-area
+text-input
+user-list
