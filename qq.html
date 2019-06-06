@@ -33,7 +33,7 @@
         <input type="text" name="" id="userInput">
         <button id="btnSure">入力</button>
     </div>
-    <div class="textNode">
+    <div class="textNode" id="textNode">
         <ul id="ul">
             <!--
             <li>sas</li>
@@ -52,8 +52,9 @@
     <textarea id="txtNode" style="resize: none"></textarea>
     <button id="btn">送る</button>
     <script type="text/javascript">
-    function toli(user,timer,inn){
-        var oLi = document.createElement('li')
+    function toli(user,timer,inn,classPool="mo"){
+        var oLi = document.createElement('li');
+        oLi.className = classPool;
         oLi.innerHTML = `
         <p>${user} ${timer}</p>
         <p>${inn}</p>
@@ -72,7 +73,17 @@
         conn.on('msg',(json)=>{
             // console.log(json)
             ul.appendChild(toli(json.userName,json.timer,json.msg));
-        })
+        });
+
+        //ログアウトしたユーザーの名前
+        conn.on('userup',(str)=>{
+             //console.log(str)
+             for(let i=0;i<ol.children.length;i++){
+                 if(ol.children[i].innerHTML == str){
+                      ol.children[i].remove();
+                 }
+             }
+        });
         conn.on('user',(arr)=>{
             ol.innerHTML="";
             for (let i=0;i<arr.length;i++){
@@ -81,9 +92,22 @@
                 ol.appendChild(oLi);
             }
         })
+        //old_msgの表示
+        conn.on('allmsg',(arry)=>{
+            for(let i = 0;i<arry.length;i++){
+                ul.appendChild(toli(arry[i].userName,arry[i].timer,arry[i].msg));
+            };
+                //`メッセージ発信するたびにスクロールバーが一番下にいく
+                textNode.scrollTop = textNode.scrollHeight-300;
+        });
+        conn.on('mymsg',(json)=>{
+            ul.appendChild(toli(json.userName,json.timer,json.msg,'my'));
+            textNode.scrollTop = textNode.scrollHeight-300;
+        })
     }
     btn.onclick = function(){
       conn.emit('msg',txtNode.value);
+      txtNode.value = '';
     }
     </script>   
 </body>
