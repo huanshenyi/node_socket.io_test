@@ -9,9 +9,46 @@
     <script type="text/javascript">
     onload=x=>{
         let conn = io.connect("ws://localhost:2131");
-        conn.on('msg',(str)=>{
-          console.log(str)
-        })
+        ((b)=>{
+         conn.on('blood',(str)=>{
+            x1.style.width = str*100+"%";
+         });
+         function play(){
+            var x = 0;t=null;
+                t = setInterval(()=>{
+                    if(x == 10){
+                        clearInterval(t);
+                        x=0;
+                        b.style.top =b.style.left = 0+ "px"
+                        return;
+                    }
+                    x++;
+                    b.style.top =b.style.left = Math.random()*20 -10 + "px"
+                },3e1);
+         }
+         conn.on('kill',(num)=>{
+           //console.log(num);
+           play()
+           x1.style.width = num[0]*100+"%";
+           var oDiv = document.createElement('div');
+           oDiv.innerHTML = num[1];
+           oDiv.style.position = "absolute"
+           oDiv.style.left = "50%";
+           oDiv.style.top = '20px';
+           oDiv.style.transition='0.7s';
+           b.appendChild(oDiv);
+           setTimeout(()=>{
+            oDiv.style.transform = 'translateY(-20px)';
+            oDiv.style.opacity='0';
+           },100);
+           setTimeout(()=>{
+              oDiv.remove();
+           },700);
+         });
+         img.onclick=()=>{
+             conn.emit('kill',1);
+         }
+     })(document.body)
     }
     </script>
     <style type="text/css">
@@ -26,24 +63,8 @@
 </head>
 <body>
     <div class="blood">
-        <div class="x"></div>
+        <div class="x" id="x1"></div>
     </div>
-    <img src="php.png" alt="php" width="300" id="img">
-    <script type="text/javascript">
-     ((b)=>{
-         var x = 0;t=null;
-         t = setInterval(()=>{
-             if(x == 10){
-                 clearInterval(t);
-                 x=0;
-                 b.style.top =b.style.left = 0+ "px"
-                 return;
-             }
-             x++;
-            b.style.top =b.style.left = Math.random()*20 -10 + "px"
-         },3e1);
-       
-     })(document.body)
-    </script>
+    <img src="php.png" alt="php" width="300" id="img"/>
 </body>
 </html>
